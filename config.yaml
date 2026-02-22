@@ -1,0 +1,13 @@
+account:
+onedrive_upload_path:
+
+# Category rules — evaluated in order, first match wins.
+# Matching is case-insensitive substring search on the transaction description.
+category_rules:
+
+  - keyword: Netflix
+    category: Abos
+    subcategory: Netflix
+
+  # Add your own rules above this line.
+  # Transactions that match no rule are categorized as "Uncategorized".

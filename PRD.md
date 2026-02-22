@@ -25,7 +25,9 @@ Revolut CSV Export ──> Python Script ──> CSV ──> Money Manager Impor
 | 5 | Output a CSV file compatible with Money Manager's import |
 | 6 | Persist sync state (set of imported transaction IDs) |
 
-## Money Manager CSV Schema
+## Money Manager TSV Schema
+
+Output is a tab-separated file (`.tsv`).
 
 | Column | Source (Revolut CSV) | Format |
 |---|---|---|
@@ -33,10 +35,10 @@ Revolut CSV Export ──> Python Script ──> CSV ──> Money Manager Impor
 | Account | Config value | e.g. "Revolut" |
 | Category | Keyword map | Must match MM categories |
 | Subcategory | Keyword map (optional) | |
-| Note | `Description` | Transaction description |
+| Note | *(blank)* | Left empty — filled manually by user |
 | Amount | `Amount` | Absolute value |
 | Income/Expense | Sign of `Amount` | "Income" if positive, "Expense" if negative |
-| Currency | `Currency` | e.g. EUR |
+| Description | `Description` | Transaction description from Revolut |
 
 ## Category Mapping
 
@@ -63,7 +65,7 @@ Third-party aggregators (GoCardless, TrueLayer) require paid plans for live data
 - **Language:** Python 3.11+
 - **Config:** YAML
 - **State:** JSON file (set of imported transaction IDs)
-- **Dependencies:** `pyyaml`, `csv` (stdlib)
+- **Dependencies:** `pyyaml`, `csv` (stdlib), `tsv` via `csv` module with `\t` delimiter
 
 ## Out of Scope
 
@@ -78,16 +80,17 @@ Third-party aggregators (GoCardless, TrueLayer) require paid plans for live data
 ```
 money-manager-auto-importer/
 ├── config.yaml            # Account name, category rules
-├── convert.py             # Entry point — run this
-├── revolut_parser.py      # Parse Revolut CSV export
-├── category_mapper.py     # Keyword → category logic
 ├── state.json             # Auto-managed dedup state
 ├── input/                 # Drop Revolut CSVs here
-└── output/                # Generated CSVs
+├── output/                # Generated TSVs
+└── src/
+    ├── convert.py         # Entry point — run this
+    ├── revolut_parser.py  # Parse Revolut CSV export
+    └── category_mapper.py # Keyword → category logic
 ```
 
 ## Success Criteria
 
-- Running `python convert.py` processes a Revolut CSV export and produces a valid Money Manager CSV
-- CSV imports into Money Manager with correct dates, amounts, and categories
+- Running `python convert.py` processes a Revolut CSV export and produces a valid Money Manager TSV
+- TSV imports into Money Manager with correct dates, amounts, and categories
 - No duplicate transactions after multiple runs
